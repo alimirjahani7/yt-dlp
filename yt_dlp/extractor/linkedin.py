@@ -1,17 +1,11 @@
-import itertools
+import html
 import re
+
+import requests
 
 from .common import InfoExtractor
 from ..utils import (
     ExtractorError,
-    extract_attributes,
-    float_or_none,
-    int_or_none,
-    mimetype2ext,
-    srt_subtitles_timecode,
-    traverse_obj,
-    try_get,
-    url_or_none,
     urlencode_postdata,
     urljoin,
 )
@@ -49,35 +43,33 @@ class LinkedInBaseIE(InfoExtractor):
 
 class LinkedInEventIE(LinkedInBaseIE):
     _VALID_URL = r'https:\/\/www\.linkedin\.com\/events\/(?P<id>\d+)\/comments\/'
-    _TESTS = [{
-        'url': 'https://www.linkedin.com/posts/mishalkhawaja_sendinblueviews-toronto-digitalmarketing-ugcPost-6850898786781339649-mM20',
-        'info_dict': {
-            'id': '6850898786781339649',
-            'ext': 'mp4',
-            'title': 'Mishal K. on LinkedIn: #sendinblueviews #toronto #digitalmarketing #nowhiring #sendinblue…',
-            'description': 'md5:2998a31f6f479376dd62831f53a80f71',
-            'uploader': 'Mishal K.',
-            'thumbnail': 're:^https?://media.licdn.com/dms/image/.*$',
-            'like_count': int
-        },
-    }]
+    _TESTS = []
 
     def _real_extract(self, url):
         video_id = self._match_id(url)
         webpage = self._download_webpage(url, video_id)
-        with open('rrr.txt', 'w') as f:
-            f.write(webpage)
-
-        # video_attrs = extract_attributes(self._search_regex(
-        #     r'https:\/\/livectorprodmedia\d+-\w+\.licdn\.com\/[a-zA-Z0-9\-]+\/L4[a-zA-Z0-9\-]+-livemanifest\.ism\/manifest\(format=m3u8-aapl(-v3)?\)',
-        #     webpage, 'video'))
+        web_decoded = html.unescape(webpage)
+        pattern = re.compile(
+            r"https:\/\/livectorprodmedia\d+-\w+\.licdn\.com\/[a-zA-Z0-9\-]+\/L4[a-zA-Z0-9\-]+-livemanifest\.ism\/manifest\(format=m3u8-aapl(-v3)?\)")
+        matched_urls = [match[0] for match in re.finditer(pattern, web_decoded)]
+        media_url = matched_urls[0].replace('aapl)', 'aapl-v3)')
+        response = requests.get(media_url)
+        result = response.text
+        lines = result.replace('\r\n', '\n').split('\n')
+        play_list_path = None
+        for line in lines:
+            line = line.strip()
+            if line and not line.startswith('#'):
+                play_list_path = line
+        base_url = media_url.rsplit('/', 1)[0]
+        play_list_url = f"{base_url}/{play_list_path}"
+        formats = []
+        formats.extend(self._extract_m3u8_formats(
+            play_list_url, '', 'mp4',
+            'm3u8_native', m3u8_id='hls', fatal=False))
         return {
             'id': video_id,
-            'formats': [{
-                'url': 'https://livectorprodmedia17-euwe.licdn.com/bceb38d6-6983-487a-9da2-7e172388065c/L4E63f3cb0ea5c68000-livemanifest.ism/manifest(format=m3u8-aapl-v3)',
-                'ext': 'm3u8',
-                'tbr': 0
-            }],
+            'formats': formats,
         }
 
 
