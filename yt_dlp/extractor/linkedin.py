@@ -45,6 +45,18 @@ class LinkedInEventIE(LinkedInBaseIE):
     _VALID_URL = r'https:\/\/www\.linkedin\.com\/events\/(?P<id>\d+)\/comments\/'
     _TESTS = []
 
+    def find_title(self, url):
+        from bs4 import BeautifulSoup
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+        }
+        response = requests.get(url, headers=headers)
+        if response.status_code == 200:
+            soup = BeautifulSoup(response.text, 'html.parser')
+            title = soup.find('title').get_text()
+            return title
+        return None
+
     def _real_extract(self, url):
         video_id = self._match_id(url)
         webpage = self._download_webpage(url, video_id)
@@ -53,6 +65,7 @@ class LinkedInEventIE(LinkedInBaseIE):
             r"https:\/\/livectorprodmedia\d+-\w+\.licdn\.com\/[a-zA-Z0-9\-]+\/L4[a-zA-Z0-9\-]+-livemanifest\.ism\/manifest\(format=m3u8-aapl(-v3)?\)")
         matched_urls = [match[0] for match in re.finditer(pattern, web_decoded)]
         media_url = matched_urls[0].replace('aapl)', 'aapl-v3)')
+        title = self.find_title(url)
         response = requests.get(media_url)
         result = response.text
         lines = result.replace('\r\n', '\n').split('\n')
@@ -67,10 +80,10 @@ class LinkedInEventIE(LinkedInBaseIE):
         formats.extend(self._extract_m3u8_formats(
             play_list_url, '', 'mp4',
             'm3u8_native', m3u8_id='hls', fatal=False))
-        return {
-            'id': video_id,
-            'formats': formats,
-        }
+        result = {'id': video_id, 'formats': formats}
+        if title:
+            result['title'] = title
+        return result
 
 
 class LinkedInIE(LinkedInEventIE):

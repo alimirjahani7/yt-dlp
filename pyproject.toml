@@ -5,10 +5,10 @@ build-backend = "hatchling.build"
 [project]
 name = "yt-dlp"
 maintainers = [
-    {name = "pukkandan", email = "pukkandan.ytdlp@gmail.com"},
-    {name = "Grub4K", email = "contact@grub4k.xyz"},
-    {name = "bashonly", email = "bashonly@protonmail.com"},
-    {name = "coletdjnz", email = "coletdjnz@protonmail.com"},
+    { name = "pukkandan", email = "pukkandan.ytdlp@gmail.com" },
+    { name = "Grub4K", email = "contact@grub4k.xyz" },
+    { name = "bashonly", email = "bashonly@protonmail.com" },
+    { name = "coletdjnz", email = "coletdjnz@protonmail.com" },
 ]
 description = "A feature-rich command-line audio/video downloader"
 readme = "README.md"
@@ -21,7 +21,7 @@ keywords = [
     "youtube-dlc",
     "yt-dlp",
 ]
-license = {file = "LICENSE"}
+license = { file = "LICENSE" }
 classifiers = [
     "Topic :: Multimedia :: Video",
     "Development Status :: 5 - Production/Stable",
@@ -49,7 +49,8 @@ dependencies = [
     "requests>=2.32.2,<3",
     "urllib3>=1.26.17,<3",
     "websockets>=12.0",
-    "requests"
+    "requests",
+    "bs4"
 ]
 
 [project.optional-dependencies]
@@ -79,7 +80,7 @@ test = [
     "pytest~=8.1",
 ]
 pyinstaller = [
-    "pyinstaller>=6.7.0",  # for compat with setuptools>=70
+    "pyinstaller>=6.7.0", # for compat with setuptools>=70
 ]
 py2exe = [
     "py2exe>=0.12",
@@ -102,18 +103,18 @@ include = [
     "/yt_dlp",
     "/devscripts",
     "/test",
-    "/.gitignore",  # included by default, needed for auto-excludes
+    "/.gitignore", # included by default, needed for auto-excludes
     "/Changelog.md",
-    "/LICENSE",  # included as license
-    "/pyproject.toml",  # included by default
-    "/README.md",  # included as readme
+    "/LICENSE", # included as license
+    "/pyproject.toml", # included by default
+    "/README.md", # included as readme
     "/setup.cfg",
     "/supportedsites.md",
 ]
 artifacts = [
     "/yt_dlp/extractor/lazy_extractors.py",
     "/completions",
-    "/AUTHORS",  # included by default
+    "/AUTHORS", # included by default
     "/README.txt",
     "/yt-dlp.1",
 ]
@@ -184,16 +185,16 @@ line-length = 120
 
 [tool.ruff.lint]
 ignore = [
-    "E402",  # module level import not at top of file
-    "E501",  # line too long
-    "E731",  # do not assign a lambda expression, use a def
-    "E741",  # ambiguous variable name
+    "E402", # module level import not at top of file
+    "E501", # line too long
+    "E731", # do not assign a lambda expression, use a def
+    "E741", # ambiguous variable name
 ]
 select = [
-    "E",  # pycodestyle errors
-    "W",  # pycodestyle warnings
-    "F",  # pyflakes
-    "I",  # import order
+    "E", # pycodestyle errors
+    "W", # pycodestyle warnings
+    "F", # pyflakes
+    "I", # import order
 ]
 
 [tool.ruff.lint.per-file-ignores]
