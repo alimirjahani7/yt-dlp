@@ -1020,8 +1020,9 @@ from .limelight import (
 )
 from .linkedin import (
     LinkedInIE,
-    LinkedInLearningCourseIE,
-    LinkedInLearningIE,
+    LinkedInEventIE,
+    # LinkedInLearningCourseIE,
+    # LinkedInLearningIE,
 )
 from .liputan6 import Liputan6IE
 from .listennotes import ListenNotesIE
