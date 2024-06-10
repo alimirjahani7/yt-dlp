@@ -60,11 +60,12 @@ class LinkedInEventIE(LinkedInBaseIE):
     def _real_extract(self, url):
         video_id = self._match_id(url)
         webpage = self._download_webpage(url, video_id)
-        web_decoded = html.unescape(webpage)
+        with open("rrr.txt", "w") as f:
+            f.write(webpage)
         pattern = re.compile(
-            r"https:\/\/(?:\w+\-)?livectorprodmedia\d+-\w+\.licdn\.com\/[a-zA-Z0-9\-]+\/[a-zA-Z0-9\-]+-livemanifest\.ism\/manifest\(format=m3u8-aapl(-v3)?\)")
-        matched_urls = [match[0] for match in re.finditer(pattern, web_decoded)]
-        media_url = matched_urls[0].replace('aapl)', 'aapl-v3)')
+            r"https:\/\/(?:\w+\-)?livectorprodmedia\d+-\w+\.licdn\.com\/[a-zA-Z0-9\-]+\/[a-zA-Z0-9\-]+-livemanifest\.ism\/manifest")
+        matched_urls = [match[0] for match in re.finditer(pattern, webpage)]
+        media_url = matched_urls[0] + '(format=m3u8-aapl-v3)'
         title = self.find_title(url)
         response = requests.get(media_url)
         result = response.text
