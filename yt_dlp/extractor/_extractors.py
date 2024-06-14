@@ -1019,7 +1019,8 @@ from .limelight import (
     LimelightMediaIE,
 )
 from .linkedin import (
-    LinkedInIE,
+    LinkedInPostEventIE,
+    LinkedInTheaterEventIE,
     LinkedInEventIE,
     # LinkedInLearningCourseIE,
     # LinkedInLearningIE,

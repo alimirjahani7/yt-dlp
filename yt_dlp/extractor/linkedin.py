@@ -42,7 +42,7 @@ class LinkedInBaseIE(InfoExtractor):
 
 
 class LinkedInEventIE(LinkedInBaseIE):
-    _VALID_URL = r'https:\/\/www\.linkedin\.com\/events\/(?P<id>\d+)\/comments\/'
+    _VALID_URL = r'https:\/\/(?:www\.)\.linkedin\.com\/events\/(?P<id>\d+)\/comments\/'
     _TESTS = []
 
     def find_title(self, url):
@@ -60,6 +60,8 @@ class LinkedInEventIE(LinkedInBaseIE):
     def _real_extract(self, url):
         video_id = self._match_id(url)
         webpage = self._download_webpage(url, video_id)
+        # with open('rrr.txt', 'w') as f:
+        #     f.write(webpage)
         pattern = re.compile(
             r"https:\/\/(?:\w+\-)?livectorprodmedia\d+-\w+\.licdn\.com\/[a-zA-Z0-9\-]+\/[a-zA-Z0-9\-]+-livemanifest\.ism\/manifest")
         matched_urls = [match[0] for match in re.finditer(pattern, webpage)]
@@ -85,5 +87,10 @@ class LinkedInEventIE(LinkedInBaseIE):
         return result
 
 
-class LinkedInIE(LinkedInEventIE):
+class LinkedInPostEventIE(LinkedInEventIE):
     _VALID_URL = r'https?://(?:www\.)?linkedin\.com/posts/[^/?#]+-(?P<id>\d+)-\w{4}/?(?:[?#]|$)'
+
+
+class LinkedInTheaterEventIE(LinkedInEventIE):
+    _VALID_URL = r'https:\/\/www\.linkedin\.com\/events\/[^\/]+(?P<id>\d+)\/theater\/'
+
